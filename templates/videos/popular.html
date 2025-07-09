@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+
+<a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm mb-3">&larr; Back</a>
+
+<h2 class="mb-3">Most liked videos</h2>
+
+<div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for video in videos %}
+    <div class="col">
+        <div class="card h-100">
+            <iframe class="card-img-top" src="{{ video.embed_url }}" loading="lazy" allowfullscreen></iframe>
+            <div class="card-body">
+                <h5 class="card-title d-flex justify-content-between align-items-center">
+                    {{ video.title }}
+                    <span class="badge bg-success">{{ video.popularity }}</span>
+                </h5>
+                <small class="text-muted">
+                    👍 {{ video.likes_cnt }} &nbsp;|&nbsp;
+                    👎 {{ video.dislikes_cnt }} &nbsp;|&nbsp;
+                    💬 {{ video.comments_cnt }}
+                </small>
+                <a href="{% url 'video-detail' video.pk %}" class="stretched-link"></a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>No videos yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}

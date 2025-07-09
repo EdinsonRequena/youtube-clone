@@ -23,4 +23,6 @@ urlpatterns = [
     path("", include("accounts.urls")),
     path("", include("videos.urls")),
     path("", include("interactions.urls")),
+    path("", include("history.urls")),
+    path("", include("comments.urls")),
 ]

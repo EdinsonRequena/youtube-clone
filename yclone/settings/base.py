@@ -32,6 +32,8 @@ LOCAL_APPS = [
     "accounts",
     "videos",
     "interactions",
+    "history",
+    "comments",
 ]
 
 INSTALLED_APPS = DJANGO_CORE_APPS + THIRD_PARTY_APPS + LOCAL_APPS

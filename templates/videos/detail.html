@@ -2,11 +2,12 @@
 {% block content %}
 
 <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm mb-3">&larr; Back</a>
+
 <h2>{{ video.title }}</h2>
 
 <iframe src="{{ video.embed_url }}" width="640" height="360" allowfullscreen class="mb-3"></iframe>
 
-<div class="mb-3">
+<div class="mb-4">
     <button id="like-btn" class="btn btn-sm me-2"
         data-active="{% if user_reaction == 'like' %}true{% else %}false{% endif %}">
         👍 <span id="like-count">{{ likes }}</span>
@@ -16,50 +17,55 @@
         data-active="{% if user_reaction == 'dislike' %}true{% else %}false{% endif %}">
         👎 <span id="dislike-count">{{ dislikes }}</span>
     </button>
-
 </div>
 
-<script>
-    function applyStyles(btn) {
-        if (btn.dataset.active === "true") {
-            btn.classList.add("btn-success");
-            btn.classList.remove("btn-outline-secondary");
-        } else {
-            btn.classList.add("btn-outline-secondary");
-            btn.classList.remove("btn-success");
-        }
-    }
-    applyStyles(document.getElementById("like-btn"));
-    applyStyles(document.getElementById("dislike-btn"));
+<h4>Comments ({{ comments|length }})</h4>
 
-    function toggle(value) {
+{% for c in comments %}
+<div class="border rounded p-2 mb-2">
+    <strong>{{ c.user.username }}</strong>
+    <small class="text-muted">{{ c.created_at|date:"Y-m-d H:i" }}</small>
+    <p class="mb-0">{{ c.text }}</p>
+</div>
+{% empty %}
+<p>No comments yet.</p>
+{% endfor %}
+
+{% if user.is_authenticated %}
+<form method="post" action="{% url 'comment-create' video.pk %}" class="mt-3">
+    {% csrf_token %}
+    {{ comment_form.text }}
+    <button class="btn btn-primary btn-sm mt-2">Send</button>
+</form>
+{% else %}
+<p class="mt-3"><a href="{% url 'login' %}">Log in</a> to comment.</p>
+{% endif %}
+
+<script>
+    function toggleStyle(btn) {
+        btn.dataset.active === "true"
+            ? btn.classList.replace("btn-outline-secondary", btn.id === "like-btn" ? "btn-success" : "btn-danger")
+            : btn.classList.replace(btn.id === "like-btn" ? "btn-success" : "btn-danger", "btn-outline-secondary");
+    }
+    toggleStyle(document.getElementById("like-btn"));
+    toggleStyle(document.getElementById("dislike-btn"));
+
+    function react(val) {
         fetch("{% url 'video-react' video.pk %}", {
             method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}",
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: "value=" + value
+            headers: { "X-CSRFToken": "{{ csrf_token }}", "Content-Type": "application/x-www-form-urlencoded" },
+            body: "value=" + val
         })
             .then(r => r.json())
-            .then(data => {
-                document.getElementById("like-count").textContent = data.likes;
-                document.getElementById("dislike-count").textContent = data.dislikes;
-
-                const likeBtn = document.getElementById("like-btn");
-                const dislikeBtn = document.getElementById("dislike-btn");
-
-                likeBtn.dataset.active = data.user_value === "like";
-                dislikeBtn.dataset.active = data.user_value === "dislike";
-                likeBtn.dataset.active === "true"
-                    ? likeBtn.classList.replace("btn-outline-secondary", "btn-success")
-                    : likeBtn.classList.replace("btn-success", "btn-outline-secondary");
-                dislikeBtn.dataset.active === "true"
-                    ? dislikeBtn.classList.replace("btn-outline-secondary", "btn-danger")
-                    : dislikeBtn.classList.replace("btn-danger", "btn-outline-secondary");
+            .then(d => {
+                document.getElementById("like-count").textContent = d.likes;
+                document.getElementById("dislike-count").textContent = d.dislikes;
+                const like = document.getElementById("like-btn"), dis = document.getElementById("dislike-btn");
+                like.dataset.active = (d.user_value === "like"); dis.dataset.active = (d.user_value === "dislike");
+                toggleStyle(like); toggleStyle(dis);
             });
     }
-    document.getElementById("like-btn").onclick = () => toggle("like");
-    document.getElementById("dislike-btn").onclick = () => toggle("dislike");
+    document.getElementById("like-btn").onclick = () => react("like");
+    document.getElementById("dislike-btn").onclick = () => react("dislike");
 </script>
 {% endblock %}
