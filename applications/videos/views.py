@@ -18,6 +18,20 @@ class VideoDetailView(DetailView):
     model = Video
     context_object_name = "video"
 
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        video = self.object
+        ctx["likes"] = video.likes.filter(value=True).count()
+        ctx["dislikes"] = video.likes.filter(value=False).count()
+        if self.request.user.is_authenticated:
+            user_like = video.likes.filter(user=self.request.user).first()
+            ctx["user_reaction"] = (
+                "like" if user_like and user_like.value else
+                "dislike" if user_like and not user_like.value else
+                "none"
+            )
+        return ctx
+
 
 class VideoCreateView(LoginRequiredMixin, CreateView):
     template_name = "videos/create.html"
