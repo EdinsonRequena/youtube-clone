@@ -1,0 +1,27 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "<5.0,>=4.2"
+psycopg2-binary = "*"
+whitenoise = "*"
+gunicorn = "*"
+python-environ = "*"
+pylint = "*"
+pylint-django = "*"
+
+[dev-packages]
+black = "*"
+isort = "*"
+pylint = "*"
+mypy = "*"
+pytest = "*"
+pytest-django = "*"
+coverage = "*"
+pre-commit = "*"
+
+[requires]
+python_version = "3.13"
+python_full_version = "3.13.3"

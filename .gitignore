@@ -1,0 +1,67 @@
+########################################################################
+#  Python / Django
+########################################################################
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual-envs & local dependencies
+.env
+.env.*
+.venv/
+venv/
+pip-wheel-metadata/
+
+# Django artifacts
+*.sqlite3
+db.sqlite3
+local_settings.py        # por si usas overrides locales
+staticfiles/             # carpeta collectstatic (prod)
+media/                   # subida de ficheros en desarrollo
+
+# Unit-test / coverage
+htmlcov/
+.coverage
+.coverage.*
+.tox/
+.pytest_cache/
+nose2-*.xml
+junit-*.xml
+
+########################################################################
+#  Build / packaging
+########################################################################
+build/
+dist/
+.eggs/
+*.egg-info/
+
+########################################################################
+#  Logs & misc
+########################################################################
+*.log
+*.pot
+*.orig
+*.rej
+
+########################################################################
+#  IDEs / Editors
+########################################################################
+# VS Code
+.vscode/
+# PyCharm / IntelliJ
+.idea/
+*.iml
+# Sublime
+*.sublime-workspace
+*.sublime-project
+
+########################################################################
+#  macOS / Linux / Windows cruft
+########################################################################
+.DS_Store
+Icon?
+.Trashes
+Thumbs.db
+ehthum
