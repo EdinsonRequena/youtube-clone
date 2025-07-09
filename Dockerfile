@@ -1,25 +1,21 @@
-FROM python:3.13-slim AS base
-
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=on
+FROM python:3.13-slim
 
 WORKDIR /code
 
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
-        build-essential libpq-dev postgresql-client curl \
+        build-essential \
+        libpq-dev \
+        postgresql-client \
+        curl \
  && rm -rf /var/lib/apt/lists/*
 
-COPY Pipfile* ./
+COPY Pipfile* /code/
 RUN pip install --no-cache-dir pipenv \
- && pipenv install --deploy --system --ignore-pipfile
-
+ && pipenv install --deploy --system --ignore-pipfile --dev
 
 COPY . /code
-
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
 
-CMD ["gunicorn", "yclone.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["./entrypoint.sh"]
